@@ -8,5 +8,5 @@
 - [   ] one to many and many to many fields (type based on related model or pk??)
 - [   ] tests
 - [   ] customize swagger ui / allow download of type for serializer of endpoint
-       probably custom js needed and override swagger-ui.html template
+        probably custom js needed and override swagger-ui.html template
 - [   ] accept custom mappings
