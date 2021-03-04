@@ -1,0 +1,12 @@
+- [ X ] basic serializers
+- [ X ] method fields
+- [ X ] model serializers
+- [ X ] required / optional
+- [ X ] nested serializers / list field
+- [ X ] ability to choose between type / interface
+- [   ] read / write only fields
+- [   ] one to many and many to many fields (type based on related model or pk??)
+- [   ] tests
+- [   ] customize swagger ui / allow download of type for serializer of endpoint
+       probably custom js needed and override swagger-ui.html template
+- [   ] accept custom mappings

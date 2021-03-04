@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "drf-typescript-generator"
+version = "0.1.0"
+description = ""
+authors = ["napmn <lukass135@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.6"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
