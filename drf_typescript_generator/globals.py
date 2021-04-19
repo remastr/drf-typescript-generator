@@ -1,5 +1,8 @@
 from rest_framework import serializers
 
+
+DEFAULT_TYPE = 'any'
+
 MAPPING = {
     # boolean fields
     serializers.BooleanField: 'boolean',
@@ -36,3 +39,12 @@ MAPPING = {
     bool: 'boolean'
     # TODO: add more
 }
+
+# field types which require special treatment
+SPECIAL_FIELD_TYPES = [
+    serializers.SerializerMethodField,
+    serializers.ChoiceField,
+    serializers.MultipleChoiceField
+]
+
+

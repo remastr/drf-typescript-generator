@@ -35,5 +35,3 @@ class Command(AppCommand):
 
         self.stdout.write(template.format(serializer_name, attributes))
 
-
-
