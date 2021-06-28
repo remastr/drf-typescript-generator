@@ -6,6 +6,8 @@ authors = ["napmn <lukass135@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+Django = "^3.2.4"
+djangorestframework = "^3.12.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
