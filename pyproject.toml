@@ -3,6 +3,7 @@ name = "drf-typescript-generator"
 version = "0.1.0"
 description = ""
 authors = ["napmn <lukass135@gmail.com>"]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"

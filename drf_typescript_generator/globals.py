@@ -23,7 +23,7 @@ MAPPING = {
     serializers.FloatField: 'number',
     serializers.DecimalField: 'number',
 
-    # date and time fields TODO: correct format depending on settings??
+    # date and time fields TODO: correct format depending on settings?
     serializers.DateTimeField: 'string',
     serializers.DateField: 'string',
     serializers.TimeField: 'string',
@@ -46,5 +46,13 @@ SPECIAL_FIELD_TYPES = [
     serializers.ChoiceField,
     serializers.MultipleChoiceField
 ]
+
+
+CHOICES_TRANSFORM_FUNCTIONS_BY_TYPE = {
+    str: lambda x: f'"{x}"',
+    int: lambda x: x,
+    float: lambda x: x,
+    bool: lambda x: str(x).lower()
+}
 
 
