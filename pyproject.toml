@@ -3,9 +3,12 @@ name = "drf-typescript-generator"
 version = "0.1.0"
 description = ""
 authors = ["napmn <lukass135@gmail.com>"]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+Django = "^3.2.4"
+djangorestframework = "^3.12.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

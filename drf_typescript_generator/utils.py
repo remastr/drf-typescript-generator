@@ -1,14 +1,23 @@
 import importlib
 import inspect
+import os
+from collections import OrderedDict
 
-from rest_framework import serializers
+from rest_framework import routers, serializers
 
-from drf_typescript_generator.globals import DEFAULT_TYPE, MAPPING, SPECIAL_FIELD_TYPES
+from drf_typescript_generator.globals import (
+    CHOICES_TRANSFORM_FUNCTIONS_BY_TYPE, DEFAULT_TYPE, MAPPING, SPECIAL_FIELD_TYPES
+)
 
 
-def _is_serializer(member):
+def _is_serializer_class(member):
     """ Returns whether the `member` is drf serializer class or not """
     return inspect.isclass(member) and serializers.BaseSerializer in inspect.getmro(member)
+
+
+def _is_router_instance(member):
+    """ Returns whether the `member` is drf router or not """
+    return not inspect.isclass(member) and routers.BaseRouter in inspect.getmro(member.__class__)
 
 
 def _to_camelcase(s):
@@ -20,6 +29,10 @@ def _check_for_nullable(field, typescript_type):
     if field.allow_null:
         typescript_type += ' | null'
     return typescript_type
+
+
+def _get_project_name():
+    return os.environ['DJANGO_SETTINGS_MODULE'].split('.')[0]
 
 
 def _get_typescript_name(field, field_name):
@@ -46,7 +59,10 @@ def _get_choice_selection_fields_type(field):
     by enumerating its choices. Also takes into account the
     allow_blank argument.
     """
-    typescript_type = ' | '.join([f'"{choice}"' for choice in field.choices.keys()])
+    def transform_choice(v):
+        return str(CHOICES_TRANSFORM_FUNCTIONS_BY_TYPE[type(v)](v))
+
+    typescript_type = ' | '.join([transform_choice(choice) for choice in field.choices.keys()])
     is_list = type(field) == serializers.MultipleChoiceField
     if field.allow_blank:
         typescript_type += ' | ""'
@@ -80,7 +96,7 @@ def _handle_nonspecial_field_type(field):
     is_list = hasattr(field, 'child')
     field_type = type(field.child) if is_list else type(field)
 
-    if _is_serializer(field_type):
+    if _is_serializer_class(field_type):
         typescript_type = field_type.__name__
     else:
         typescript_type = MAPPING.get(field_type, DEFAULT_TYPE)
@@ -124,14 +140,45 @@ def get_serializer_fields(serializer):
         typescript_type = _get_typescript_type(field, field_name, serializer_instance)
         typescript_fields[typescript_field_name] = typescript_type
 
-    return typescript_fields
+    return OrderedDict(sorted(typescript_fields.items()))
 
 
-def get_app_serializers(app_name):
-    """ Returns all serializer classes found in {app_name}.serializers module """
+def get_app_routers(app_name):
+    """ Returns all routers found in {app_name}.urls module """
     try:
-        # TODO: dynamic name of serializers file?
-        serializer_module = importlib.import_module('.serializers', package=app_name)
-        return inspect.getmembers(serializer_module, _is_serializer)
+        urls_module = importlib.import_module('.urls', package=app_name)
+        return inspect.getmembers(urls_module, _is_router_instance)
     except ImportError:
         return []
+
+
+def get_project_routers():
+    """ Returns all routers found in project urls module """
+    project_name = _get_project_name()
+    return get_app_routers(project_name)
+
+
+def get_module_serializers(module):
+    """ Returns all serializer classes found in given module """
+    try:
+        urls_module = importlib.import_module(module)
+        return inspect.getmembers(urls_module, _is_serializer_class)
+    except ImportError:
+        return []
+
+
+def export_serializer(serializer_name, fields, output_format, semicolons):
+    def format_field(field):
+        formatted = f'\t{field[0]}: {field[1]}'
+        if semicolons:
+            formatted += ';'
+        return formatted
+
+    attributes = '\n'.join([format_field(field) for field in fields.items()])
+
+    if output_format == 'type':
+        template = 'export type {} = {{\n{}\n}}\n\n'
+    else:
+        template = 'export interface {} {{\n{}\n}}\n\n'
+
+    return template.format(serializer_name, attributes)
