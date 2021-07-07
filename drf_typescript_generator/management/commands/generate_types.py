@@ -36,7 +36,7 @@ class Command(AppCommand):
 
         # find modules containing viewsets in the app (views.py, api.py, etc.)
         for router in routers:
-            for _, viewset_class, _ in router.registry:
+            for _prefix, viewset_class, _basename in router.registry:
                 module = viewset_class.__module__
                 if module.split('.')[0] == app_config.name:
                     views_modules.add(module)
