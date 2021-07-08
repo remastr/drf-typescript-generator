@@ -167,16 +167,17 @@ def get_module_serializers(module):
         return []
 
 
-def export_serializer(serializer_name, fields, output_format, semicolons):
-    def format_field(field):
-        formatted = f'\t{field[0]}: {field[1]}'
-        if semicolons:
+def export_serializer(serializer_name, fields, options):
+    def format_field(field, indent):
+        formatted = f'{indent}{field[0]}: {field[1]}'
+        if options['semicolons']:
             formatted += ';'
         return formatted
 
-    attributes = '\n'.join([format_field(field) for field in fields.items()])
+    indent = '\t' * options['tabs'] if options['tabs'] is not None else ' ' * options['spaces']
+    attributes = '\n'.join([format_field(field, indent) for field in fields.items()])
 
-    if output_format == 'type':
+    if options['format'] == 'type':
         template = 'export type {} = {{\n{}\n}}\n\n'
     else:
         template = 'export interface {} {{\n{}\n}}\n\n'
