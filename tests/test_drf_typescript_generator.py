@@ -89,7 +89,13 @@ class TestListField(BaseTest):
 
 def test_model_serializer():
     fields = get_serializer_fields(ModelTestSerializer)
-    ts_serializer = export_serializer('ModelTestSerializer', fields, 'type', False)
+    options = {
+        'format': 'type',
+        'semicolons': False,
+        'tabs': None,
+        'spaces': 2
+    }
+    ts_serializer = export_serializer('ModelTestSerializer', fields, options)
     assert ' '.join(ts_serializer.split()).strip() == ' '.join(
         """
         export type ModelTestSerializer = {

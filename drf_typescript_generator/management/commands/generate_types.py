@@ -19,13 +19,17 @@ class Command(AppCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--format', type=str, choices=['type', 'interface'], default='types',
+            '--format', type=str, choices=['type', 'interface'], default='type',
             help='Specifies whether the result will be types or interfaces'
         )
         parser.add_argument(
             '--semicolons', action='store_true', default=False,
             help='Semicolons will be added if this argument is present'
         )
+        whitespace_group = parser.add_mutually_exclusive_group()
+        whitespace_group.add_argument('--spaces', type=int, default=2)
+        whitespace_group.add_argument('--tabs', type=int)
+
         return super().add_arguments(parser)
 
     def handle_app_config(self, app_config: AppConfig, **options):
@@ -48,6 +52,6 @@ class Command(AppCommand):
         for serializer_name, serializer in sorted(serializers):
             if serializer_name not in self.already_parsed:
                 fields = get_serializer_fields(serializer)
-                ts_serializer = export_serializer(serializer_name, fields, options['format'], options['semicolons'])
+                ts_serializer = export_serializer(serializer_name, fields, options)
                 self.already_parsed.add(serializer_name)
                 self.stdout.write(ts_serializer)
