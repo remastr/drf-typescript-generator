@@ -5,6 +5,7 @@ from drf_typescript_generator.utils import (
     export_serializer,
     get_app_routers,
     get_module_serializers,
+    get_nested_serializers,
     get_project_routers,
     get_serializer_fields,
 )
@@ -50,8 +51,17 @@ class Command(AppCommand):
             serializers = serializers.union(get_module_serializers(module))
 
         for serializer_name, serializer in sorted(serializers):
-            if serializer_name not in self.already_parsed:
-                fields = get_serializer_fields(serializer)
-                ts_serializer = export_serializer(serializer_name, fields, options)
-                self.already_parsed.add(serializer_name)
-                self.stdout.write(ts_serializer)
+            self.process_serializer(serializer_name, serializer, options)
+
+    def process_serializer(self, serializer_name, serializer, options):
+        if serializer_name not in self.already_parsed:
+            # recursively process nested serializers first to ensure that
+            # TS equivalent is generated even if they are not used in views module
+            nested_serializers = get_nested_serializers(serializer)
+            for nested_serializer_name, nested_serializer in nested_serializers.items():
+                self.process_serializer(nested_serializer_name, nested_serializer, options)
+
+            fields = get_serializer_fields(serializer)
+            ts_serializer = export_serializer(serializer_name, fields, options)
+            self.already_parsed.add(serializer_name)
+            self.stdout.write(ts_serializer)

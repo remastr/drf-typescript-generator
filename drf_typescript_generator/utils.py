@@ -125,10 +125,28 @@ def _get_typescript_type(field, field_name, serializer_instance):
     return typescript_type + ('[]' if is_list else '')
 
 
+def get_nested_serializers(serializer):
+    """
+    Finds nested serializers in given serializer. Returns
+    ordered dictionary with keys being name of the nested
+    serializers and values nested serializer classes.
+    """
+    serializer_instance = serializer()
+    fields = serializer_instance.get_fields()
+    nested_serializers = {}
+    for field in fields.values():
+        is_list = hasattr(field, 'child')
+        field_type = type(field.child) if is_list else type(field)
+        if _is_serializer_class(field_type):
+            nested_serializers[field_type.__name__] = field_type
+
+    return OrderedDict(sorted(nested_serializers.items()))
+
+
 def get_serializer_fields(serializer):
     """
     Determines a typescript type for every field in the serializer.
-    Returns dictionary with keys being transformed field names to
+    Returns ordered dictionary with keys being transformed field names to
     typescript names (including `?` if field is optional) and values
     being typescript types.
     """
