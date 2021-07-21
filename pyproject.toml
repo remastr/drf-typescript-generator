@@ -1,9 +1,16 @@
 [tool.poetry]
 name = "drf-typescript-generator"
-version = "0.1.0"
+version = "0.1.1"
 description = "Package for generating TypeScript types from DRF serializers"
 authors = ["napmn <lukass135@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/remastr/drf-typescript-generator"
+keywords = ["django", "drf"]
+classifiers = [
+  "Environment :: Web Environment",
+  "Framework :: Django",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
