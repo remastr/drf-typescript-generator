@@ -39,6 +39,7 @@ class ListFieldTestSerializer(serializers.Serializer):
 class Model(models.Model):
     field1 = models.CharField(max_length=255, blank=True)
     field2 = models.IntegerField()
+    case_field = models.IntegerField()
 
     class Meta:
         app_label = 'tests'
@@ -49,7 +50,7 @@ class ModelTestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Model
-        fields = ['field1', 'field2', 'field3']
+        fields = ['field1', 'field2', 'field3', 'case_field']
 
 
 class NestedSerializersTestSerializer(serializers.Serializer):

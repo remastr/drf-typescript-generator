@@ -35,8 +35,11 @@ def _get_project_name():
     return os.environ['DJANGO_SETTINGS_MODULE'].split('.')[0]
 
 
-def _get_typescript_name(field, field_name):
-    typescript_field_name = _to_camelcase(field_name)
+def _get_typescript_name(field, field_name, options={}):
+    if options.get('preserve_case', False):
+        typescript_field_name = field_name
+    else:
+        typescript_field_name = _to_camelcase(field_name)
     if not field.read_only and not field.required:
         typescript_field_name += '?'
     return typescript_field_name
@@ -143,7 +146,7 @@ def get_nested_serializers(serializer):
     return OrderedDict(sorted(nested_serializers.items()))
 
 
-def get_serializer_fields(serializer):
+def get_serializer_fields(serializer, options={}):
     """
     Determines a typescript type for every field in the serializer.
     Returns ordered dictionary with keys being transformed field names to
@@ -154,7 +157,7 @@ def get_serializer_fields(serializer):
     fields = serializer_instance.get_fields()
     typescript_fields = {}
     for field_name, field in fields.items():
-        typescript_field_name = _get_typescript_name(field, field_name)
+        typescript_field_name = _get_typescript_name(field, field_name, options)
         typescript_type = _get_typescript_type(field, field_name, serializer_instance)
         typescript_fields[typescript_field_name] = typescript_type
 
