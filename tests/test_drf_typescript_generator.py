@@ -9,7 +9,7 @@ from drf_typescript_generator.utils import (
 from drf_typescript_generator.globals import DEFAULT_TYPE
 
 from tests.utils import (
-    ChoiceFieldTestSerializer, ListFieldTestSerializer, MethodOutputTestSerializer, 
+    ChoiceFieldTestSerializer, ListFieldTestSerializer, MethodOutputTestSerializer,
     ModelTestSerializer, NestedSerializersTestSerializer, TypescriptNameTestSerializer
 )
 

@@ -3,21 +3,20 @@ import inspect
 import os
 from collections import OrderedDict
 
-from rest_framework import routers, serializers
+from rest_framework import serializers, views
 
 from drf_typescript_generator.globals import (
     CHOICES_TRANSFORM_FUNCTIONS_BY_TYPE, DEFAULT_TYPE, MAPPING, SPECIAL_FIELD_TYPES
 )
 
+def _is_api_view(member):
+    """ Returns whether the `member` is drf api view """
+    return inspect.isclass(member) and views.APIView in inspect.getmro(member)
+
 
 def _is_serializer_class(member):
     """ Returns whether the `member` is drf serializer class or not """
     return inspect.isclass(member) and serializers.BaseSerializer in inspect.getmro(member)
-
-
-def _is_router_instance(member):
-    """ Returns whether the `member` is drf router or not """
-    return not inspect.isclass(member) and routers.BaseRouter in inspect.getmro(member.__class__)
 
 
 def _to_camelcase(s):
@@ -161,19 +160,18 @@ def get_serializer_fields(serializer):
     return OrderedDict(sorted(typescript_fields.items()))
 
 
-def get_app_routers(app_name):
-    """ Returns all routers found in {app_name}.urls module """
+def get_app_api_views(app_name):
+    """ Returns all api views classes found in {app_name}.urls module """
     try:
         urls_module = importlib.import_module('.urls', package=app_name)
-        return inspect.getmembers(urls_module, _is_router_instance)
+        return inspect.getmembers(urls_module, _is_api_view)
     except ImportError:
         return []
 
 
-def get_project_routers():
-    """ Returns all routers found in project urls module """
-    project_name = _get_project_name()
-    return get_app_routers(project_name)
+def get_project_api_views():
+    """ Returns all api views classes found in project urls module """
+    return get_app_api_views(_get_project_name())
 
 
 def get_module_serializers(module):
