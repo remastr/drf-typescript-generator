@@ -27,6 +27,10 @@ class Command(AppCommand):
             '--semicolons', action='store_true', default=False,
             help='Semicolons will be added if this argument is present'
         )
+        parser.add_argument(
+            '--preserve-case', action='store_true', default=False,
+            help='Preserve field name case from serializers'
+        )
         whitespace_group = parser.add_mutually_exclusive_group()
         whitespace_group.add_argument('--spaces', type=int, default=2)
         whitespace_group.add_argument('--tabs', type=int)
@@ -57,7 +61,7 @@ class Command(AppCommand):
             for nested_serializer_name, nested_serializer in nested_serializers.items():
                 self.process_serializer(nested_serializer_name, nested_serializer, options)
 
-            fields = get_serializer_fields(serializer)
+            fields = get_serializer_fields(serializer, options)
             ts_serializer = export_serializer(serializer_name, fields, options)
             self.already_parsed.add(serializer_name)
             self.stdout.write(ts_serializer)

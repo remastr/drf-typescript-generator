@@ -88,23 +88,48 @@ class TestListField(BaseTest):
 
 
 def test_model_serializer():
-    fields = get_serializer_fields(ModelTestSerializer)
     options = {
         'format': 'type',
         'semicolons': False,
         'tabs': None,
-        'spaces': 2
+        'spaces': 2,
+        'preserve_case': False
     }
+    fields = get_serializer_fields(ModelTestSerializer)
     ts_serializer = export_serializer('ModelTestSerializer', fields, options)
     assert ' '.join(ts_serializer.split()).strip() == ' '.join(
         """
         export type ModelTestSerializer = {
+            caseField: number
             field1?: string
             field2: number
             field3: number
         }
         """.split()
     ).strip()
+
+
+def test_model_serializer_preserve_case():
+    options = {
+        'format': 'type',
+        'semicolons': False,
+        'tabs': None,
+        'spaces': 2,
+        'preserve_case': True
+    }
+    fields = get_serializer_fields(ModelTestSerializer, options)
+    ts_serializer = export_serializer('ModelTestSerializer', fields, options)
+    assert ' '.join(ts_serializer.split()).strip() == ' '.join(
+        """
+        export type ModelTestSerializer = {
+            case_field: number
+            field1?: string
+            field2: number
+            field3: number
+        }
+        """.split()
+    ).strip()
+
 
 
 class TestNestedSerializers(BaseTest):
