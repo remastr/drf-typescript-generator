@@ -59,8 +59,9 @@ export type MySerializer = {
 }
 ```
 
-The script looks for DRF routers in project urls&#46;py file as well as urls&#46;py files in given
-apps and extracts serializers based on viewsets defined in those routers.
+The script looks for classes that inherit from `APIView` in project urls&#46;py file as well as urls&#46;py
+files in given apps. It then extracts serializers which are used in modules of found classes. This approach
+cover `Views` as well as `ViewSets`.
 
 ### Arguments
 
