@@ -73,6 +73,7 @@ The `generate_types` command supports following arguments:
 | `--semicolons` | boolean | If the argument is present semicolons will be added in output | False
 | `--spaces` | int | Output indentation will use given number of spaces (mutually exclusive with `--tabs`). Spaces are used if neither `--spaces` nor `--tabs` argument is present. | 2
 | `--tabs` | int | Output indentation will use given number of tabs (mutually exclusive with `--spaces`) | None
+| `--preserve-case` | boolean | If present properties in generated types will preserve serializer fields casing (camelcased otherwise) | False
 
 ## Features
 
