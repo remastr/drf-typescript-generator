@@ -6,7 +6,6 @@ DEFAULT_TYPE = 'any'
 MAPPING = {
     # boolean fields
     serializers.BooleanField: 'boolean',
-    serializers.NullBooleanField: 'boolean',
 
     # string fields
     serializers.CharField: 'string',
