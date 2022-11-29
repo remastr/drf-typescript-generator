@@ -43,7 +43,7 @@ class Command(AppCommand):
 
         for _name, api_view_class in self.project_api_views + get_app_api_views(app_config.name):
             module = api_view_class.__module__
-            if module.split('.')[0] == app_config.name:
+            if module.startswith(app_config.name):
                 views_modules.add(module)
 
         # extract all serializers found in views modules
