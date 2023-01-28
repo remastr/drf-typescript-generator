@@ -6,7 +6,6 @@ DEFAULT_TYPE = 'any'
 MAPPING = {
     # boolean fields
     serializers.BooleanField: 'boolean',
-    serializers.NullBooleanField: 'boolean',
 
     # string fields
     serializers.CharField: 'string',
@@ -30,7 +29,10 @@ MAPPING = {
     serializers.DurationField: 'string',
 
     # choice selection fields TODO: export also choices?
+
+
     # TODO: file upload fields?
+    serializers.FileField: 'File',
 
     # method return values
     str: 'string',
