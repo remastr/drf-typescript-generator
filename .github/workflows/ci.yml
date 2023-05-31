@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-versions:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+        django-versions:
+          - "3.2"
+          - "4.1"
+        drf-versions:
+          - "3.12"
+          - "3.13"
+    runs-on: ubuntu-latest
+    name: "Python ${{ matrix.python-versions }} - Django ${{ matrix.django-versions }} - DRF ${{ matrix.drf-versions }}"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-versions }}
+      - name: Setup Poetry
+        uses: snok/install-poetry@v1.3.3
+      - name: Install dependencies
+        run: |
+          poetry install
+          poetry run pip install "Django~=${{ matrix.django-versions }}.0" "djangorestframework~=${{ matrix.drf-versions }}.0"
+      - name: Run tests
+        run: poetry run pytest
